@@ -1,0 +1,61 @@
+# ==================================================
+# Python cache files
+# ==================================================
+# Prevent Python compiled files from being copied
+# into the Docker image.
+__pycache__/
+*.py[cod]
+*$py.class
+
+
+# ==================================================
+# Virtual environments
+# ==================================================
+# The Docker container will have its own Python
+# environment, so local environments are unnecessary.
+.venv/
+venv/
+
+
+# ==================================================
+# Django local database
+# ==================================================
+# SQLite database created locally should not be copied.
+# Production databases should be external services.
+db.sqlite3
+
+
+# ==================================================
+# Environment variables
+# ==================================================
+# Prevent secrets from being copied into images.
+.env
+
+
+# ==================================================
+# Git files
+# ==================================================
+# Git history is not required inside containers.
+.git/
+.gitignore
+
+
+# ==================================================
+# IDE/editor files
+# ==================================================
+# Ignore local development settings.
+.vscode/
+.idea/
+
+
+# ==================================================
+# Test coverage files
+# ==================================================
+.coverage
+htmlcov/
+
+
+# ==================================================
+# OS generated files
+# ==================================================
+.DS_Store

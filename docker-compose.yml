@@ -1,0 +1,45 @@
+# ==================================================
+# Docker Compose version
+# ==================================================
+
+# Defines containers required for this project.
+services:
+
+  # ==================================================
+  # Django API container
+  # ==================================================
+
+  web:
+
+    # Build image from Dockerfile
+    # located in the current directory.
+    build: .
+
+    # Name of running container.
+    container_name: book_catalog_api
+
+    # ==================================================
+    # Port mapping
+    # ==================================================
+
+    # Host machine port : Container port
+    # Access API: http://localhost:8000
+    ports:
+      - "8000:8000"
+
+    # ==================================================
+    # Development volume
+    # ==================================================
+
+    # Mount current project directory
+    # into /app inside container.
+    # Allows code changes without rebuilding.
+    volumes:
+      - .:/book_catalog_app
+
+    # ==================================================
+    # Django startup command
+    # ==================================================
+
+    command:
+      python manage.py runserver 0.0.0.0:8000
