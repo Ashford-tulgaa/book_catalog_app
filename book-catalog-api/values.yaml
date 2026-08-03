@@ -13,6 +13,9 @@ image:
   # Always check for the latest image when starting a Pod.
   pullPolicy: Always
 
+  imagePullSecrets:
+  - name: ghcr-secret
+
 # ==================================================
 # Deployment Configuration
 # ==================================================
