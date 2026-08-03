@@ -3,7 +3,7 @@ name: Book Catalog API CI
 
 # This workflow runs on every push to the main branch and on pull requests targeting main.
 permissions:
-  contents: read
+  contents: write
   packages: write
 
 # When this workflow runs
@@ -33,6 +33,8 @@ jobs:
       # -------------------------------------------------
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
 
       # -------------------------------------------------
@@ -91,20 +93,60 @@ jobs:
 
       # -------------------------------------------------
       # Step 7: Build Docker image
+      #
+      # Uses commit SHA as immutable image tag.
+      # Example:
+      # book-catalog-api:a83f92d1
       # -------------------------------------------------
       - name: Build Docker image
         if: github.event_name == 'push'
         run: |
           docker build \
-          -t ghcr.io/ashford-tulgaa/book-catalog-api:latest .
+          -t ghcr.io/ashford-tulgaa/book-catalog-api:${{ github.sha }} .
 
 
       # -------------------------------------------------
-      # Step 8: Push image to GHCR
+      # Step 8: Push Docker image to GHCR
       #
-      # Kubernetes will later pull this image.
+      # Kubernetes will pull this exact image tag.
       # -------------------------------------------------
       - name: Push Docker image
         if: github.event_name == 'push'
         run: |
-          docker push ghcr.io/ashford-tulgaa/book-catalog-api:latest
+          docker push \
+          ghcr.io/ashford-tulgaa/book-catalog-api:${{ github.sha }}
+
+
+      # -------------------------------------------------
+      # Step 9: Update Helm values
+      #
+      # Changes:
+      # tag: latest
+      #
+      # into:
+      # tag: <commit-sha>
+      # -------------------------------------------------
+      - name: Update Helm image tag
+        if: github.event_name == 'push'
+        run: |
+          sed -i "s/tag:.*/tag: ${{ github.sha }}/" \
+          book-catalog-api/values.yaml
+
+
+      # -------------------------------------------------
+      # Step 10: Commit Helm change
+      #
+      # Argo CD watches Git.
+      # This commit triggers deployment.
+      # -------------------------------------------------
+      - name: Commit Helm update
+        if: github.event_name == 'push'
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          git add book-catalog-api/values.yaml
+
+          git commit -m "Update image tag to ${{ github.sha }}" || exit 0
+
+          git push
