@@ -1,0 +1,77 @@
+# ------------------------------------------------------------
+# Argo CD Application
+#
+# This resource tells Argo CD:
+# 1. Which Git repository to monitor
+# 2. Where the Helm chart is located
+# 3. Which Kubernetes cluster to deploy to
+# 4. How synchronization should work
+# ------------------------------------------------------------
+
+# Argo CD Application API version
+apiVersion: argoproj.io/v1alpha1
+
+# Create an Argo CD Application resource
+kind: Application
+
+metadata:
+
+  # Name shown in the Argo CD dashboard
+  name: book-catalog-api
+
+  # Argo CD itself is installed in this namespace,
+  # so the Application resource must also live here.
+  namespace: argocd
+
+spec:
+
+  # Argo CD Project that this application belongs to.
+  # Every application must belong to a project.
+  # The default project allows deployments to any namespace and cluster.
+  project: default
+
+  # Source defines where Argo CD finds the application to deploy.
+  source:
+
+    # Git repository containing the Helm chart.
+    repoURL: https://github.com/Ashford-tulgaa/book_catalog_app.git
+
+    # Branch Argo CD continuously watches.
+    # Every commit to this branch can trigger a deployment.
+    targetRevision: main
+
+    # Folder inside the repository containing the Helm chart.
+    path: book-catalog-api
+
+  # Destination defines where the application will be deployed.
+  destination:
+
+    # The Kubernetes API server.
+    # This is the cluster where Argo CD is currently installed.
+    server: https://kubernetes.default.svc
+
+    # Namespace where the Helm chart will be deployed.
+    namespace: default
+
+  # ----------------------------------------------------------
+  # Synchronization Policy
+  #
+  # Controls how Argo CD keeps Kubernetes synchronized
+  # with the Git repository.
+  # ----------------------------------------------------------
+  syncPolicy:
+
+    automated:
+
+      # Remove Kubernetes resources that were deleted from Git.
+      prune: true
+
+      # If someone manually changes Kubernetes resources,
+      # Argo CD restores them to match Git automatically.
+      selfHeal: true
+
+    syncOptions:
+
+      # Create the destination namespace automatically
+      # if it does not already exist.
+      - CreateNamespace=true

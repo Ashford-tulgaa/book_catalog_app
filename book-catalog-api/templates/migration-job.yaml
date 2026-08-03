@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+
+metadata:
+  name: book-catalog-migrate
+
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+
+      containers:
+        - name: migrate
+
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+
+          command:
+            - python
+            - manage.py
+            - migrate
+
+          envFrom:
+            - configMapRef:
+                name: book-catalog-api
+
+            - secretRef:
+                name: book-catalog-api
