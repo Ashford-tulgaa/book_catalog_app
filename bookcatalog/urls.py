@@ -14,7 +14,7 @@ urlpatterns = [
     # All book endpoints begin with: /api/books/
     path(
         # Include the book API routes from the books app.
-        "api/",
+        "books/",
         include("books.urls")
     ),
 ]

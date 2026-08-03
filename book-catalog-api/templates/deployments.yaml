@@ -1,0 +1,69 @@
+# ==================================================
+# Deployment
+# ==================================================
+# Creates and manages the Django application Pods.
+# ==================================================
+
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+
+  # Deployment name.
+  name: {{ include "book-catalog-api.fullname" . }}
+
+spec:
+
+  # Number of Pods to run.
+  replicas: {{ .Values.replicaCount }}
+
+  selector:
+
+    matchLabels:
+
+      # Match Pods with this label.
+      app: {{ include "book-catalog-api.name" . }}
+
+  template:
+
+    metadata:
+
+      labels:
+
+        # Label assigned to created Pods.
+        app: {{ include "book-catalog-api.name" . }}
+
+    spec:
+
+      # Allows Kubernetes to authenticate with GHCR
+      # and pull the private Docker image.
+      imagePullSecrets:
+
+      - name: ghcr-secret
+
+      containers:
+
+      - name: django-api
+
+        # Docker image from GHCR.
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+
+        # Image pull behaviour.
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+
+        ports:
+
+        # Django application port.
+        - containerPort: {{ .Values.containerPort }}
+
+        # Load environment variables from ConfigMap and Secret.
+        envFrom:
+
+        - configMapRef:
+
+            name: {{ include "book-catalog-api.fullname" . }}
+
+        - secretRef:
+
+            name: {{ include "book-catalog-api.fullname" . }}

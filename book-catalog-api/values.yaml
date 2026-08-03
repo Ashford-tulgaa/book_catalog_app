@@ -1,0 +1,73 @@
+# ==================================================
+# Docker Image Configuration
+# ==================================================
+
+image:
+
+  # Docker image stored in GitHub Container Registry.
+  repository: ghcr.io/ashford-tulgaa/book-catalog-api
+
+  # Docker image tag.
+  tag: latest
+
+  # Always check for the latest image when starting a Pod.
+  pullPolicy: Always
+
+# ==================================================
+# Deployment Configuration
+# ==================================================
+
+# Number of application Pods.
+replicaCount: 2
+
+# ==================================================
+# Container Configuration
+# ==================================================
+
+# Port exposed by the Django application.
+containerPort: 8000
+
+# ==================================================
+# Service Configuration
+# ==================================================
+
+service:
+
+  # Internal Kubernetes service.
+  type: ClusterIP
+
+  # Port exposed by the service.
+  port: 80
+
+# ==================================================
+# Ingress Configuration
+# ==================================================
+
+ingress:
+
+  # Enable Ingress resource.
+  enabled: true
+
+  # Hostname used for routing traffic.
+  host: bookcatalog.local
+
+# ==================================================
+# Environment Variables (ConfigMap)
+# ==================================================
+
+config:
+
+  # Django settings module.
+  DJANGO_SETTINGS_MODULE: bookcatalog.settings
+
+  # Disable buffered logging.
+  PYTHONUNBUFFERED: "1"
+
+# ==================================================
+# Secret Values
+# ==================================================
+
+secret:
+
+  # Django secret key.
+  DJANGO_SECRET_KEY: ZGFkYWR3YWRhZA==

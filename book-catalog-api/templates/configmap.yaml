@@ -1,0 +1,22 @@
+# ==================================================
+# ConfigMap
+# ==================================================
+# Stores non-sensitive configuration values.
+# ==================================================
+
+apiVersion: v1
+
+kind: ConfigMap
+
+metadata:
+
+  # ConfigMap name.
+  name: {{ include "book-catalog-api.fullname" . }}
+
+data:
+
+  # Django settings module.
+  DJANGO_SETTINGS_MODULE: "{{ .Values.config.DJANGO_SETTINGS_MODULE }}"
+
+  # Disable buffered logging.
+  PYTHONUNBUFFERED: "{{ .Values.config.PYTHONUNBUFFERED }}"

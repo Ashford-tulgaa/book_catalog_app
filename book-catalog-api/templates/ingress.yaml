@@ -1,0 +1,42 @@
+# ==================================================
+# Ingress
+# ==================================================
+# Routes external HTTP requests to the Django Service.
+# ==================================================
+
+apiVersion: networking.k8s.io/v1
+
+kind: Ingress
+
+metadata:
+
+  # Ingress name.
+  name: {{ include "book-catalog-api.fullname" . }}
+
+spec:
+
+  rules:
+
+  # Hostname for incoming requests.
+  - host: {{ .Values.ingress.host }}
+
+    http:
+
+      paths:
+
+      # Route all requests to the application.
+      - path: /
+
+        pathType: Prefix
+
+        backend:
+
+          service:
+
+            # Target Service.
+            name: {{ include "book-catalog-api.fullname" . }}
+
+            port:
+
+              # Service port.
+              number: {{ .Values.service.port }}

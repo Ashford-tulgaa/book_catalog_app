@@ -1,0 +1,32 @@
+# ==================================================
+# Service
+# ==================================================
+# Exposes the Django Pods inside the Kubernetes cluster.
+# ==================================================
+
+apiVersion: v1
+
+kind: Service
+
+metadata:
+
+  # Service name.
+  name: {{ include "book-catalog-api.fullname" . }}
+
+spec:
+
+  # Service type.
+  type: {{ .Values.service.type }}
+
+  selector:
+
+    # Forward traffic to Pods with this label.
+    app: {{ include "book-catalog-api.name" . }}
+
+  ports:
+
+  # Service port.
+  - port: {{ .Values.service.port }}
+
+    # Port exposed by the container.
+    targetPort: {{ .Values.containerPort }}

@@ -1,0 +1,24 @@
+# ==================================================
+# Helm Chart Metadata
+# ==================================================
+
+# Helm API version.
+# v2 is used for Helm 3 charts.
+apiVersion: v2
+
+# Type of chart.
+# "application" means this chart deploys an application.
+type: application
+
+# Name of the Helm chart.
+name: book-catalog-api
+
+# Short description of the application.
+description: Helm chart for deploying the Django Book Catalog API.
+
+# Version of the Helm chart.
+# Increment this when making changes to the chart itself.
+version: 0.0.1
+
+# Version of the application being deployed.
+appVersion: "0.0.1"
