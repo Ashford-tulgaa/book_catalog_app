@@ -77,16 +77,16 @@ jobs:
       # -------------------------------------------------
       # Step 6: Login to GitHub Container Registry
       #
-      # Uses GitHub's automatically generated token.
-      # No personal token stored manually.
+      # Uses a Personal Access Token stored as a GitHub Secret.
+      # The actual token is NOT stored in this file.
       # -------------------------------------------------
       - name: Login to GHCR
         if: github.event_name == 'push'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: Ashford-tulgaa
+          password: ${{ secrets.GHCR_TOKEN }}
 
 
       # -------------------------------------------------
