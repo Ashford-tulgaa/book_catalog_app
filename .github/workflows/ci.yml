@@ -1,6 +1,11 @@
 # GitHub Actions workflow name
 name: Book Catalog API CI
 
+# This workflow runs on every push to the main branch and on pull requests targeting main.
+permissions:
+  contents: read
+  packages: write
+
 # When this workflow runs
 on:
   # Tells to run on every push to the main branch
