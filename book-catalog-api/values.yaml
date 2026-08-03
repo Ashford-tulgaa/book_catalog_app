@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/ashford-tulgaa/book-catalog-api
 
   # Docker image tag.
-  tag: latest
+  tag: 550bdb25a830750402584e0b8122d05bbafe20a9
 
   # Always check for the latest image when starting a Pod.
   pullPolicy: Always
