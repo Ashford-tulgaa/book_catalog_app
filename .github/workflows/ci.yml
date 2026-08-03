@@ -1,0 +1,105 @@
+# GitHub Actions workflow name
+name: Book Catalog API CI
+
+# When this workflow runs
+on:
+  # Tells to run on every push to the main branch
+  push:
+    branches:
+      - main
+
+  # Also run when pull requests target main
+  pull_request:
+    branches:
+      - main
+
+
+jobs:
+
+  build-and-test:
+
+    # Use GitHub's Ubuntu runner
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # -------------------------------------------------
+      # Step 1: Download repository code
+      # -------------------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+
+      # -------------------------------------------------
+      # Step 2: Setup Python environment
+      # -------------------------------------------------
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.14"
+
+
+      # -------------------------------------------------
+      # Step 3: Install Django dependencies
+      # -------------------------------------------------
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+
+      # -------------------------------------------------
+      # Step 4: Prepare Django database
+      #
+      # CI needs migrations because your API uses models.
+      # This creates the SQLite test database.
+      # -------------------------------------------------
+      - name: Run migrations
+        run: |
+          python manage.py migrate
+
+
+      # -------------------------------------------------
+      # Step 5: Run Django automated tests
+      #
+      # If tests fail, Docker image will NOT be built.
+      # -------------------------------------------------
+      - name: Run tests
+        run: |
+          python manage.py test
+
+
+      # -------------------------------------------------
+      # Step 6: Login to GitHub Container Registry
+      #
+      # Uses GitHub's automatically generated token.
+      # No personal token stored manually.
+      # -------------------------------------------------
+      - name: Login to GHCR
+        if: github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+
+      # -------------------------------------------------
+      # Step 7: Build Docker image
+      # -------------------------------------------------
+      - name: Build Docker image
+        if: github.event_name == 'push'
+        run: |
+          docker build \
+          -t ghcr.io/ashford-tulgaa/book-catalog-api:latest .
+
+
+      # -------------------------------------------------
+      # Step 8: Push image to GHCR
+      #
+      # Kubernetes will later pull this image.
+      # -------------------------------------------------
+      - name: Push Docker image
+        if: github.event_name == 'push'
+        run: |
+          docker push ghcr.io/ashford-tulgaa/book-catalog-api:latest
