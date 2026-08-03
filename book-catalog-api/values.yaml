@@ -3,6 +3,7 @@
 # ==================================================
 
 image:
+
   # Docker image stored in GitHub Container Registry.
   repository: ghcr.io/ashford-tulgaa/book-catalog-api
 
@@ -12,8 +13,6 @@ image:
   # Always check for the latest image when starting a Pod.
   pullPolicy: Always
 
-
-# Kubernetes secret used to authenticate with GHCR.
 imagePullSecrets:
   - name: ghcr-secret
 
