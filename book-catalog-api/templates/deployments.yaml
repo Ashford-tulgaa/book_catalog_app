@@ -39,8 +39,7 @@ spec:
       # Allows Kubernetes to authenticate with GHCR
       # and pull the private Docker image.
       imagePullSecrets:
-
-      - name: ghcr-secret
+        {{- toYaml .Values.imagePullSecrets | nindent 8 }}
 
       containers:
 
