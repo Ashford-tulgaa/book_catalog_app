@@ -139,7 +139,7 @@ jobs:
       - name: Update Helm image tag
         if: github.event_name == 'push'
         run: |
-          sed -i "s/tag:.*/tag: ${{ github.sha }}/" \
+          sed -i "/^image:/,/^[^ ]/ s/tag:.*/tag: ${{ github.sha }}/" \
           book-catalog-api/values.yaml
 
 
