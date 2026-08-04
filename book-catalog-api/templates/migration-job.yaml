@@ -3,10 +3,17 @@ kind: Job
 
 metadata:
   name: book-catalog-migrate
+  annotations:
+    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
 
 spec:
   template:
     spec:
+
+      imagePullSecrets:
+        - name: ghcr-secret
+
       restartPolicy: Never
 
       containers:
