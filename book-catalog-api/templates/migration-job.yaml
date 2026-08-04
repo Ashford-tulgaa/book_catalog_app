@@ -5,7 +5,7 @@ metadata:
   name: book-catalog-migrate
   annotations:
     # Run migration before normal deployment.
-    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook: PostSync
 
     # Delete old migration Job before creating a new one.
     argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
