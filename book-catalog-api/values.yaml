@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/ashford-tulgaa/book-catalog-api
 
   # Docker image tag.
-  tag: eda65521a424c1fcdc211a1ddccb17bc03ce7fad
+  tag: cce542863250beb6ae7c63e66ff2e03a2018c630
 
   # Always check for the latest image when starting a Pod.
   pullPolicy: Always
@@ -98,7 +98,7 @@ postgresql:
     database: book_catalog
 
   image:
-    tag: eda65521a424c1fcdc211a1ddccb17bc03ce7fad
+    tag: cce542863250beb6ae7c63e66ff2e03a2018c630
 
   primary:
     persistence:
