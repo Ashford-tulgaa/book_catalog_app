@@ -75,7 +75,7 @@ secret:
   # Django secret key.
   DJANGO_SECRET_KEY: ZGFkYWR3YWRhZA==
 
-  postgresql:
+postgresql:
 
   enabled: true
 
@@ -83,6 +83,9 @@ secret:
     username: bookuser
     password: bookpassword
     database: book_catalog
+
+  image:
+    tag: "17.5.0-debian-12-r9"
 
   primary:
     persistence:
