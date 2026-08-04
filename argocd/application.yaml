@@ -43,6 +43,10 @@ spec:
     # Folder inside the repository containing the Helm chart.
     path: book-catalog-api
 
+    helm:
+      valueFiles:
+        - values.yaml
+
   # Destination defines where the application will be deployed.
   destination:
 
