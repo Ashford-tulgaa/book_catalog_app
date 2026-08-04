@@ -79,7 +79,8 @@ metadata:
     helm.sh/chart: postgresql-16.7.10
 type: Opaque
 data:
-  postgres-password: "bmo1OHluVDQycA=="
+  postgres-password: "SmtjckxoYmZMZQ=="
+  password: "Ym9va3Bhc3N3b3Jk"
   # We don't auto-generate LDAP password when it's not provided as we do for other passwords
 
 ---
@@ -275,7 +276,7 @@ spec:
       - name: django-api
 
         # Docker image from GHCR.
-        image: "ghcr.io/ashford-tulgaa/book-catalog-api:6536889ade6523e82d9a1ab3dd1e7c5a6b5abe75"
+        image: "ghcr.io/ashford-tulgaa/book-catalog-api:689f975181e32ed666569e8229fff66651d24d57"
 
         # Image pull behaviour.
         imagePullPolicy: Always
@@ -358,7 +359,7 @@ spec:
       hostIPC: false
       containers:
         - name: postgresql
-          image: docker.io/bitnami/postgresql:17.5.0-debian-12-r10
+          image: docker.io/bitnami/postgresql:17.5.0-debian-12-r9
           imagePullPolicy: "IfNotPresent"
           securityContext:
             allowPrivilegeEscalation: false
@@ -383,8 +384,14 @@ spec:
             - name: PGDATA
               value: "/bitnami/postgresql/data"
             # Authentication
+            - name: POSTGRES_USER
+              value: "bookuser"
             - name: POSTGRES_PASSWORD_FILE
+              value: /opt/bitnami/postgresql/secrets/password
+            - name: POSTGRES_POSTGRES_PASSWORD_FILE
               value: /opt/bitnami/postgresql/secrets/postgres-password
+            - name: POSTGRES_DATABASE
+              value: "book_catalog"
             # LDAP
             - name: POSTGRESQL_ENABLE_LDAP
               value: "no"
@@ -418,7 +425,7 @@ spec:
               command:
                 - /bin/sh
                 - -c
-                - exec pg_isready -U "postgres" -h 127.0.0.1 -p 5432
+                - exec pg_isready -U "bookuser" -d "dbname=book_catalog" -h 127.0.0.1 -p 5432
           readinessProbe:
             failureThreshold: 6
             initialDelaySeconds: 5
@@ -431,7 +438,7 @@ spec:
                 - -c
                 - -e
                 - |
-                  exec pg_isready -U "postgres" -h 127.0.0.1 -p 5432
+                  exec pg_isready -U "bookuser" -d "dbname=book_catalog" -h 127.0.0.1 -p 5432
                   [ -f /opt/bitnami/postgresql/tmp/.initialized ] || [ -f /bitnami/postgresql/.initialized ]
           resources:
             limits:
@@ -477,7 +484,7 @@ spec:
           - "ReadWriteOnce"
         resources:
           requests:
-            storage: "8Gi"
+            storage: "5Gi"
         
 
 ---
@@ -503,7 +510,7 @@ spec:
       containers:
         - name: migrate
 
-          image: "ghcr.io/ashford-tulgaa/book-catalog-api:6536889ade6523e82d9a1ab3dd1e7c5a6b5abe75"
+          image: "ghcr.io/ashford-tulgaa/book-catalog-api:689f975181e32ed666569e8229fff66651d24d57"
 
           command:
             - python
