@@ -98,7 +98,7 @@ postgresql:
     database: book_catalog
 
   image:
-    tag: 9aee706ce4355eed3da2d7ff758aab5f3d1c7f0b
+    tag: 17.5.0-debian-12-r9
 
   primary:
     persistence:
