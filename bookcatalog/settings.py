@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 
+
+import os
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -72,12 +75,34 @@ WSGI_APPLICATION = 'bookcatalog.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        # Use PostgreSQL as the database backend instead of SQLite.
+        # Django will communicate with PostgreSQL through this driver.
+        "ENGINE": "django.db.backends.postgresql",
+
+        # Database name inside PostgreSQL.
+        # Loaded from Kubernetes Secret environment variable DB_NAME.
+        "NAME": os.environ.get("DB_NAME"),
+
+        # PostgreSQL username used by Django to authenticate.
+        # Loaded from Kubernetes Secret environment variable DB_USER.
+        "USER": os.environ.get("DB_USER"),
+
+        # PostgreSQL password.
+        # Loaded from Kubernetes Secret environment variable DB_PASSWORD.
+        # This avoids storing credentials in source code.
+        "PASSWORD": os.environ.get("DB_PASSWORD"),
+
+        # PostgreSQL service hostname.
+        # In Kubernetes this is the PostgreSQL Service DNS name,
+        # for example: book-catalog-api-postgresql.
+        "HOST": os.environ.get("DB_HOST"),
+
+        # PostgreSQL port.
+        # Defaults to 5432, which is the standard PostgreSQL port.
+        "PORT": os.environ.get("DB_PORT", "5432"),
     }
 }
 

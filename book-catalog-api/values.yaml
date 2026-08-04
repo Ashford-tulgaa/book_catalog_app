@@ -74,3 +74,17 @@ secret:
 
   # Django secret key.
   DJANGO_SECRET_KEY: ZGFkYWR3YWRhZA==
+
+  postgresql:
+
+  enabled: true
+
+  auth:
+    username: bookuser
+    password: bookpassword
+    database: book_catalog
+
+  primary:
+    persistence:
+      enabled: true
+      size: 5Gi

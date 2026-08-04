@@ -22,3 +22,8 @@ version: 0.0.1
 
 # Version of the application being deployed.
 appVersion: "0.0.1"
+
+dependencies:
+  - name: postgresql
+    version: 16.7.10
+    repository: https://charts.bitnami.com/bitnami
