@@ -6,7 +6,7 @@ image:
   # Docker image stored in GitHub Container Registry.
   repository: ghcr.io/ashford-tulgaa/book-catalog-api
   # Docker image tag.
-  tag: b60c8550cb3069dd838bdf368259fe157eb13398
+  tag: 98c521b3f4380b6f8e47d0691dfa5097ccdac02d
   # Always check for the latest image when starting a Pod.
   pullPolicy: Always
 imagePullSecrets:
