@@ -1,146 +1,108 @@
 # Book Catalog API
 
-## Project Overview
+A Django REST Framework application that manages a simple book catalog and demonstrates a full DevOps delivery flow using Docker, PostgreSQL, GitHub Actions, Helm, and Argo CD.
 
-Book Catalog API is a Django REST Framework application that provides CRUD operations for managing books.
+## Project overview
 
-The project demonstrates a complete DevOps workflow by combining:
+This repository provides a lightweight API for storing and managing books. The backend is implemented with Django and Django REST Framework, and the project is structured to support:
 
-* Django REST API development
-* Docker containerization
-* GitHub Actions CI/CD automation
-* GitHub Container Registry (GHCR) image publishing
-* Kubernetes deployment
-* Helm-based application management
-* Argo CD GitOps continuous deployment
+- Local development with Docker Compose
+- Automated CI validation with GitHub Actions
+- Container image publishing to GitHub Container Registry (GHCR)
+- Kubernetes deployment via Helm
+- GitOps reconciliation through Argo CD
 
-The application exposes REST endpoints for creating, retrieving, updating, and deleting book records.
+### Core features
 
-## Technology Stack
+- Create a new book
+- List all books
+- Retrieve a single book by ID
+- Update an existing book
+- Delete a book
 
-| Component             | Technology                       |
-| --------------------- | -------------------------------- |
-| Backend               | Django 5 + Django REST Framework |
-| Database              | SQLite (development)             |
-| Containerization      | Docker                           |
-| Container Registry    | GitHub Container Registry (GHCR) |
-| CI/CD                 | GitHub Actions                   |
-| Kubernetes            | Kubernetes / k3d                 |
-| Package Management    | Helm                             |
-| Continuous Deployment | Argo CD                          |
+### Data model
 
----
+The `Book` model contains the following fields:
 
-# API Usage Examples
+- `title`
+- `author`
+- `isbn`
+- `published_date`
 
-## Base URL
+The `isbn` field is validated to ensure it contains either 10 or 13 numeric digits.
 
-When running locally:
+### Repository layout
 
-```
-http://localhost:8000
-```
+- `bookcatalog/` — Django project settings and application wiring
+- `books/` — models, serializers, views, URL routing, and tests
+- `book-catalog-api/` — Helm chart used for Kubernetes deployment
+- `argocd/` — Argo CD application manifest
+- `.github/workflows/ci.yml` — CI workflow for tests, image build, and Helm image tag update
 
 ---
 
-## List All Books
+## API usage examples
 
-### Request
+The API is available under the `/api/` prefix.
+
+### Base URL
+
+Local development:
+
+```text
+http://localhost:8000/api/
+```
+
+### Endpoints
 
 ```http
-GET /api/books/
+GET    /api/books/           List all books
+POST   /api/books/           Create a book
+GET    /api/books/<id>/      Retrieve one book
+PUT    /api/books/<id>/      Replace one book
+PATCH  /api/books/<id>/      Partially update one book
+DELETE /api/books/<id>/      Delete one book
 ```
 
-Example:
+### Example request payload
+
+```json
+{
+  "title": "Clean Code",
+  "author": "Robert C. Martin",
+  "isbn": "9780132350884",
+  "published_date": "2008-08-01"
+}
+```
+
+### Example `curl` commands
+
+List books:
 
 ```bash
 curl http://localhost:8000/api/books/
 ```
 
-Example response:
-
-```json
-[
-    {
-        "id": 1,
-        "title": "Clean Code",
-        "author": "Robert C. Martin",
-        "published_date": "2008-08-01"
-    }
-]
-```
-
----
-
-## Create a Book
-
-### Request
-
-```http
-POST /api/books/
-```
-
-Example:
+Create a book:
 
 ```bash
 curl -X POST http://localhost:8000/api/books/ \
--H "Content-Type: application/json" \
--d '{
-    "title": "The Pragmatic Programmer",
-    "author": "Andrew Hunt",
-    "published_date": "1999-10-20"
-}'
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Clean Code",
+    "author": "Robert C. Martin",
+    "isbn": "9780132350884",
+    "published_date": "2008-08-01"
+  }'
 ```
 
----
-
-## Retrieve a Single Book
-
-### Request
-
-```http
-GET /api/books/<id>/
-```
-
-Example:
+Retrieve a specific book:
 
 ```bash
 curl http://localhost:8000/api/books/1/
 ```
 
----
-
-## Update a Book
-
-### Request
-
-```http
-PUT /api/books/<id>/
-```
-
-Example:
-
-```bash
-curl -X PUT http://localhost:8000/api/books/1/ \
--H "Content-Type: application/json" \
--d '{
-    "title": "Updated Book Title",
-    "author": "Updated Author",
-    "published_date": "2025-01-01"
-}'
-```
-
----
-
-## Delete a Book
-
-### Request
-
-```http
-DELETE /api/books/<id>/
-```
-
-Example:
+Delete a specific book:
 
 ```bash
 curl -X DELETE http://localhost:8000/api/books/1/
@@ -148,327 +110,177 @@ curl -X DELETE http://localhost:8000/api/books/1/
 
 ---
 
-# Local Build and Run Instructions
+## Local build and run instructions
 
-## 1. Clone Repository
+### Prerequisites
 
-```bash
-git clone https://github.com/Ashford-tulgaa/book_catalog_app.git
+- Python 3.14+
+- pip
+- Docker and Docker Compose
+- PostgreSQL database or a compatible local database service
 
-cd book_catalog_app
-```
+### Option 1: Run with Docker Compose
 
----
-
-## 2. Create Virtual Environment
-
-```bash
-python -m venv .venv
-```
-
-Activate:
-
-macOS/Linux:
+From the project root:
 
 ```bash
-source .venv/bin/activate
+docker compose up --build
 ```
 
-Windows:
+This runs the Django development server and exposes the API on:
+
+```text
+http://localhost:8000
+```
+
+To stop the containers:
 
 ```bash
-.venv\Scripts\activate
+docker compose down
 ```
 
----
+### Option 2: Run directly with Django
 
-## 3. Install Dependencies
+1. Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
----
+2. Export the required environment variables:
 
-## 4. Run Database Migrations
+```bash
+export DB_NAME=book_catalog
+export DB_USER=bookuser
+export DB_PASSWORD=bookpassword
+export DB_HOST=localhost
+export DB_PORT=5432
+```
+
+3. Run database migrations:
 
 ```bash
 python manage.py migrate
 ```
 
----
-
-## 5. Start Django Development Server
+4. Start the app:
 
 ```bash
-python manage.py runserver
+python manage.py runserver 0.0.0.0:8000
 ```
 
-The API will be available at:
-
-```
-http://localhost:8000/api/books/
-```
-
----
-
-# Docker Build and Run
-
-## Build Docker Image
-
-```bash
-docker build \
--t book-catalog-api .
-```
-
----
-
-## Run Container
-
-```bash
-docker run -p 8000:8000 book-catalog-api
-```
-
-The API will be available at:
-
-```
-http://localhost:8000
-```
-
----
-
-# CI/CD Pipeline
-
-The project uses GitHub Actions to automate continuous integration and container publishing.
-
-The workflow is triggered when changes are pushed or merged into the `main` branch.
-
-## Pipeline Flow
-
-```
-Developer Push
-        |
-        v
-GitHub Actions
-        |
-        +--> Install Python dependencies
-        |
-        +--> Run Django migrations
-        |
-        +--> Execute automated tests
-        |
-        +--> Build Docker image
-        |
-        +--> Push image to GHCR
-        |
-        v
-Argo CD Deployment
-        |
-        v
-Kubernetes Cluster
-```
-
-## CI Steps
-
-### Dependency Installation
-
-GitHub Actions installs all required Python packages:
-
-```bash
-pip install -r requirements.txt
-```
-
-### Testing
-
-The pipeline executes Django tests:
+### Run tests
 
 ```bash
 python manage.py test
 ```
 
-If tests fail, the Docker image is not created.
+---
 
-### Docker Image Build
+## CI/CD pipeline explanation
 
-The workflow builds a production container image:
+The repository uses GitHub Actions for continuous integration and delivery.
 
-```bash
-docker build -t ghcr.io/ashford-tulgaa/book-catalog-api:latest .
-```
+### Pipeline flow
 
-### Image Publishing
+The workflow in `.github/workflows/ci.yml` performs the following steps:
 
-The image is pushed to GitHub Container Registry:
+1. Checks out the repository code
+2. Sets up Python 3.14 on the runner
+3. Installs the project dependencies from `requirements.txt`
+4. Runs the Django test suite against a PostgreSQL service container
+5. If the workflow runs on a push to `main`, logs in to GitHub Container Registry (GHCR)
+6. Builds the Docker image using the repository `Dockerfile`
+7. Pushes the image to GHCR using a commit SHA as the tag
+8. Updates the Helm values file to reference the new image tag
+9. Commits that Helm change back to the repository so Argo CD can reconcile the deployment
 
-```
-ghcr.io/ashford-tulgaa/book-catalog-api
-```
+### Why this matters
+
+This pipeline creates a clean automation path:
+
+- code changes trigger test validation
+- passing changes are packaged into a Docker image
+- the image is published to a registry
+- Helm values are updated to the new tag
+- Argo CD applies the new revision to the cluster automatically
 
 ---
 
-# Kubernetes and Helm Setup
+## Kubernetes and Helm setup instructions
 
-## Requirements
+The Helm chart in `book-catalog-api/` is responsible for deploying the application into Kubernetes.
 
-Install:
+### What the chart deploys
 
-* Docker
-* kubectl
-* k3d
-* Helm
+- A Django API `Deployment`
+- A Kubernetes `Service`
+- An `Ingress` endpoint
+- A PostgreSQL dependency from the Bitnami Helm chart
+- A migration job that runs `python manage.py migrate` after synchronization
+
+### Helm chart values
+
+Key configuration is stored in `book-catalog-api/values.yaml`.
+
+Important defaults include:
+
+- image repository: `ghcr.io/ashford-tulgaa/book-catalog-api`
+- replica count: `2`
+- service type: `ClusterIP`
+- container port: `8000`
+- ingress host: `bookcatalog.local`
+- PostgreSQL database name: `book_catalog`
+
+### Install or upgrade with Helm
+
+From the repository root:
+
+```bash
+helm dependency build book-catalog-api
+helm upgrade --install book-catalog-api ./book-catalog-api
+```
+
+### Access the app in Kubernetes
+
+If you are running a local cluster or a dev ingress setup, you can expose the service either through the configured ingress host or via port-forwarding:
+
+```bash
+kubectl port-forward svc/book-catalog-api 8000:80
+```
+
+Then access the API at:
+
+```text
+http://localhost:8000/api/books/
+```
+
+### Argo CD GitOps deployment
+
+The repository also contains an Argo CD application manifest in `argocd/application.yaml`.
+
+This manifest tells Argo CD to:
+
+- watch the Git repository on the `main` branch
+- read the Helm chart from `book-catalog-api/`
+- deploy the chart into the `default` namespace
+
+This gives the project a GitOps-based deployment loop where changes in Git become the source of truth for Kubernetes resources.
 
 ---
 
-# Create Kubernetes Cluster
+## Docker image details
 
-Create a local Kubernetes cluster using k3d:
-
-```bash
-k3d cluster create book-catalog
-```
-
-Verify:
+The image is built from the `Dockerfile` and starts the Django development server with:
 
 ```bash
-kubectl get nodes
+python manage.py runserver 0.0.0.0:8000
 ```
 
----
+This container is intended to run on port `8000`.
 
-# Deploy Using Helm
+## Notes
 
-The application is packaged as a Helm chart:
-
-```
-book-catalog-api/
-├── Chart.yaml
-├── values.yaml
-└── templates/
-```
-
-Install:
-
-```bash
-helm install book-catalog-api ./book-catalog-api
-```
-
-Check deployment:
-
-```bash
-kubectl get pods
-```
-
----
-
-## Upgrade Application
-
-When Helm chart changes are made:
-
-```bash
-helm upgrade book-catalog-api ./book-catalog-api
-```
-
----
-
-# Argo CD GitOps Deployment
-
-Argo CD manages Kubernetes deployment automatically.
-
-The Argo CD Application configuration is stored in:
-
-```
-argocd/application.yaml
-```
-
-It defines:
-
-* Git repository location
-* Helm chart path
-* Kubernetes destination
-* Automatic synchronization policy
-
-Example deployment flow:
-
-```
-Git Repository
-      |
-      v
-Argo CD detects change
-      |
-      v
-Helm chart synchronization
-      |
-      v
-Kubernetes deployment updated
-```
-
-Argo CD automatically:
-
-* Syncs changes from Git
-* Applies Helm updates
-* Self-heals manual cluster changes
-* Removes resources deleted from Git
-
----
-
-# Useful Kubernetes Commands
-
-View deployments:
-
-```bash
-kubectl get deployments
-```
-
-View pods:
-
-```bash
-kubectl get pods
-```
-
-View services:
-
-```bash
-kubectl get services
-```
-
-View logs:
-
-```bash
-kubectl logs deployment/book-catalog-api
-```
-
-Restart deployment:
-
-```bash
-kubectl rollout restart deployment book-catalog-api
-```
-
----
-
-# Project Structure
-
-```
-book_catalog_app/
-|
-├── bookcatalog/          # Django project
-├── books/                # Book API application
-├── book-catalog-api/     # Helm chart
-├── argocd/               # Argo CD configuration
-├── .github/
-│   └── workflows/        # GitHub Actions pipeline
-├── Dockerfile
-├── requirements.txt
-└── manage.py
-```
-
----
-
-# Future Improvements
-
-Possible improvements:
-
-* Use PostgreSQL instead of SQLite
-* Add database migrations during deployment
-* Use versioned Docker image tags instead of `latest`
-* Add monitoring with Prometheus and Grafana
-* Deploy to managed Kubernetes infrastructure
+- The app is configured to use PostgreSQL-backed runtime settings.
+- The current setup is well suited for a demo, learning project, or DevOps showcase.
+- The Helm configuration expects the PostgreSQL service name to match the chart-managed database service.
