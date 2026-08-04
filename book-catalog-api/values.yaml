@@ -3,103 +3,73 @@
 # ==================================================
 
 image:
-
   # Docker image stored in GitHub Container Registry.
   repository: ghcr.io/ashford-tulgaa/book-catalog-api
-
   # Docker image tag.
-  tag: 8a7e9db066a876fb042cffa1e03716c58a138a8f
-
+  tag: 756794a6387f69561428885b805ef4a654a61d01
   # Always check for the latest image when starting a Pod.
   pullPolicy: Always
-
 imagePullSecrets:
   - name: ghcr-secret
-
 # ==================================================
 # Deployment Configuration
 # ==================================================
 
 # Number of application Pods.
 replicaCount: 2
-
 # ==================================================
 # Container Configuration
 # ==================================================
 
 # Port exposed by the Django application.
 containerPort: 8000
-
 # ==================================================
 # Service Configuration
 # ==================================================
-
 service:
-
   # Internal Kubernetes service.
   type: ClusterIP
-
   # Port exposed by the service.
   port: 80
-
 # ==================================================
 # Ingress Configuration
 # ==================================================
-
 ingress:
-
   # Enable Ingress resource.
   enabled: true
-
   # Hostname used for routing traffic.
   host: bookcatalog.local
-
 # ==================================================
 # Environment Variables (ConfigMap)
 # ==================================================
-
 config:
-
   # Django settings module.
   DJANGO_SETTINGS_MODULE: bookcatalog.settings
-
   # Disable buffered logging.
   PYTHONUNBUFFERED: "1"
-
   # PostgreSQL database name.
   DB_NAME: book_catalog
-
   # PostgreSQL database user.
   DB_USER: bookuser
-
   # Kubernetes Service name for PostgreSQL.
   # This must match the Bitnami PostgreSQL service.
   DB_HOST: book-catalog-api-postgresql
-
   # PostgreSQL service port.
   DB_PORT: "5432"
-
 # ==================================================
 # Secret Values
 # ==================================================
-
 secret:
-
   # Django secret key.
   DJANGO_SECRET_KEY: ZGFkYWR3YWRhZA==
-
 postgresql:
-
   enabled: true
-
   auth:
     username: bookuser
     password: bookpassword
     database: book_catalog
-
   image:
     tag: 17.5.0-debian-12-r9
-
   primary:
     persistence:
       enabled: true
