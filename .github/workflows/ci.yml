@@ -54,20 +54,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-
       # -------------------------------------------------
-      # Step 4: Prepare Django database
-      #
-      # CI needs migrations because your API uses models.
-      # This creates the SQLite test database.
-      # -------------------------------------------------
-      - name: Run migrations
-        run: |
-          python manage.py migrate
-
-
-      # -------------------------------------------------
-      # Step 5: Run Django automated tests
+      # Step 4: Run Django automated tests
       #
       # If tests fail, Docker image will NOT be built.
       # -------------------------------------------------
@@ -77,7 +65,7 @@ jobs:
 
 
       # -------------------------------------------------
-      # Step 6: Login to GitHub Container Registry
+      # Step 5: Login to GitHub Container Registry
       #
       # Uses a Personal Access Token stored as a GitHub Secret.
       # The actual token is NOT stored in this file.
@@ -92,7 +80,7 @@ jobs:
 
 
       # -------------------------------------------------
-      # Step 7: Build Docker image
+      # Step 6: Build Docker image
       #
       # Uses commit SHA as immutable image tag.
       # Example:
@@ -106,7 +94,7 @@ jobs:
 
 
       # -------------------------------------------------
-      # Step 8: Push Docker image to GHCR
+      # Step 7: Push Docker image to GHCR
       #
       # Kubernetes will pull this exact image tag.
       # -------------------------------------------------
@@ -118,7 +106,7 @@ jobs:
 
 
       # -------------------------------------------------
-      # Step 9: Update Helm values
+      # Step 8: Update Helm values
       #
       # Changes:
       # tag: latest
@@ -134,7 +122,7 @@ jobs:
 
 
       # -------------------------------------------------
-      # Step 10: Commit Helm change
+      # Step 9: Commit Helm change
       #
       # Argo CD watches Git.
       # This commit triggers deployment.
