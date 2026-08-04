@@ -66,6 +66,19 @@ config:
   # Disable buffered logging.
   PYTHONUNBUFFERED: "1"
 
+  # PostgreSQL database name.
+  DB_NAME: book_catalog
+
+  # PostgreSQL database user.
+  DB_USER: bookuser
+
+  # Kubernetes Service name for PostgreSQL.
+  # This must match the Bitnami PostgreSQL service.
+  DB_HOST: book-catalog-api-postgresql
+
+  # PostgreSQL service port.
+  DB_PORT: "5432"
+
 # ==================================================
 # Secret Values
 # ==================================================
