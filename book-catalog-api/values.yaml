@@ -69,6 +69,7 @@ postgresql:
     password: bookpassword
     database: book_catalog
   image:
+    tag: latest
   primary:
     persistence:
       enabled: true
